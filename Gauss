@@ -1,0 +1,105 @@
+#Считываем с файла расширенную матрицу
+
+f = open('inp.txt','r')
+s = f.readline()
+mass = []
+
+#количество столбцов в массиве
+j = len(s)
+
+#количество уравнений (строк массива)  
+k = 0   
+while s != '\n':
+    m = []
+    i = 0
+    l = 0
+    
+    n = len(s)
+    try:
+        while s[n-1]!=' ':
+            #длина последнего числа
+            i += 1
+            n -= 1
+    except IndexError :
+        break
+    while len(s) > i:
+        while (s[l] != ' ') and (len(s) > i): 
+            l += 1            
+        s1 = int(s[:l+1])
+        m = m + [s1]
+        s = s[l+1:]        
+        l = 0
+    k += 1
+    m = m + [int(s)]   
+    mass.append(m)    
+    s = f.readline()
+
+
+stroka = 0
+a=mass
+r = a
+ri = 1
+#Цикл повторям столько раз, сколько у нас строк в матрице - 1
+
+for t in range(len(a)-1):
+
+    #Делаем первый элемент строки, равный 1
+    
+    stroka = 0
+    d = 1 / a[stroka][stroka]
+    for k in range(len(a[stroka])):
+        a[stroka][k] *= d
+
+    #Обнуляем все элементы первого столбца, кроме элемента первой строки
+        
+    i = stroka + 1
+    while i != len(a):
+        s = a[i][0]
+        for j in range(len(a[0])):
+            a[i][j] = a[i][j] - s*a[0][j]
+            if round(a[i][j],2) == -0.0:
+                a[i][j] = 0
+        i += 1
+        stroka +=1
+    
+    #Обрезаем матрицу - убераем первый столбец и первую строку.
+        
+    a = a[1:]
+    for h in range(len(a)):
+        a[h]=a[h][1:]
+
+    #Записываем готовую стоку в массив r
+        
+    r[ri]=a[0]
+    ri += 1
+
+
+
+#Округляем элементы матрицы до трех знаков после запятой
+    
+for h1 in range(len(r)):
+    for h2 in range(len(r[h1])):
+        r[h1][h2] = round(r[h1][h2],3)
+        if r[h1][h2] == -0.0:
+            r[h1][h2] = 0
+
+#Создаем список с решением системы
+sys=[]
+for i in range (len(r)):
+    sys =sys+[0]
+l=1
+
+for i in range (len(r)-1,-1,-1):
+    t= len(r[i])-1
+    sys[i]=r[i][t]/r[i][t-l]
+    
+    for j in range (len(r)-l):
+        q=len(r[j])-1
+        
+        r[j][q]=r[j][q]-sys[i]*r[j][q-l]
+    l=l+1
+print (sys)
+
+   
+    
+
